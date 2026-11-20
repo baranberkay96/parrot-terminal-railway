@@ -22,7 +22,7 @@ Listing: **Parrot OS 7 Security Web Terminal (Browser Shell)**, "Parrot OS secur
 
 | Service | Idle RAM | Typical | CPU |
 |---|---|---|---|
-| Terminal | ~0.1 GB | 0.2–1 GB (scans, cracking) | bursts |
+| Terminal | 0.04–0.10 GB (measured) | 0.2–1 GB (scans, cracking) | bursts |
 
 About $1–3/month idle at Railway prices plus the volume ($0.15/GB-month). Runs on every plan, including Trial (1 GB) and Free (0.5 GB) for the shell itself.
 

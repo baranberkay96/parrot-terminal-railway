@@ -33,7 +33,7 @@ A browser shell needs a long-running Linux container, a terminal server, a real 
 |---|---|---|
 | Terminal | Dockerfile based on `parrotsec/core:7.4` | nginx basic-auth proxy on port 8080 (public HTTPS domain, `/healthz`), ttyd on loopback, tmux sessions, user `parrot` with sudo, volume at `/home` |
 
-**Plan:** light enough for any plan. Idle with an open tmux session the service uses well under 0.2 GB of RAM (see the measured figure in the template notes). Heavy tools such as Metasploit or large hashcat runs need more memory than the shell itself.
+**Plan:** light enough for any plan, Free included. Measured on Railway: about 0.04 GB of RAM right after start and 0.1 GB with an open tmux session after an nmap scan. The default image is about 1.2 GB compressed (2.6 GB of packages), well under the 4 GB build limit of Trial and Free. Heavy tools such as Metasploit or long hashcat runs need more memory than the shell itself.
 
 **First login**
 
