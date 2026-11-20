@@ -59,30 +59,36 @@ RUN curl -fsSL --retry 5 --retry-all-errors -o /usr/local/bin/ttyd \
 
 # Command-line security tools from the Parrot archive. Recon: nmap, masscan
 # (needs raw sockets, so it cannot scan on Railway), dnsrecon, dnsenum, amass,
-# subfinder, dnsx, naabu, httpx, theHarvester, recon-ng, sherlock, whois, dig.
-# Web: sqlmap, gobuster, ffuf, feroxbuster, dirb, dirsearch, whatweb, wafw00f,
-# wfuzz, nuclei, sslscan, commix. Passwords: hydra, john, hashcat (CPU only),
+# subfinder, dnsx, naabu, httpx, recon-ng, sherlock, whois, dig. Web: sqlmap,
+# gobuster, ffuf, dirb, dirsearch, whatweb, wafw00f, wfuzz, nuclei, sslscan.
+# Passwords: hydra, john, hashcat (CPU only, through PoCL),
 # hashid, hash-identifier, crunch, cewl, wordlists (rockyou). Windows/AD:
 # smbclient, smbmap, nbtscan, enum4linux-ng, netexec, impacket, evil-winrm.
 # Reference and post-exploitation: searchsploit (exploitdb), peass,
 # linux-exploit-suggester, lynis. Reversing and forensics: gdb, radare2,
-# binwalk, yara, exiftool. GUI tools are left out: this is a terminal.
+# binwalk, yara, exiftool. GUI tools are left out: this is a terminal. Left
+# out for size (each can be added with PARROT_EXTRA_PACKAGES): commix (its
+# package depends on metasploit-framework and PostgreSQL), theharvester
+# (depends on Chromium and Node.js) and feroxbuster (depends on seclists,
+# about 2 GB installed). Together they tripled the image.
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      amass bind9-dnsutils binwalk cewl commix crunch dirb dirsearch dnsenum \
-      dnsrecon dnsx enum4linux-ng evil-winrm exploitdb feroxbuster ffuf gdb \
+      amass bind9-dnsutils binwalk cewl crunch dirb dirsearch dnsenum \
+      dnsrecon dnsx enum4linux-ng evil-winrm exploitdb ffuf gdb \
       gobuster hash-identifier hashcat hashid httpx-toolkit hydra \
       impacket-scripts john libimage-exiftool-perl linux-exploit-suggester \
       lynis masscan naabu nbtscan netexec nmap nuclei parrot-core peass \
       proxychains4 radare2 recon-ng sherlock smbclient smbmap sqlmap sslscan \
-      subfinder theharvester wafw00f whatweb wfuzz whois wordlists yara \
+      subfinder wafw00f whatweb wfuzz whois wordlists yara \
  && rm -rf /var/lib/apt/lists/*
 
 # Optional extras from PARROT_EXTRA_PACKAGES, checked as package names first
 # so the variable cannot inject shell or apt options. A value typed into the
 # deploy form must not fail the build: invalid names and packages that apt
 # cannot install are skipped with a warning (here and in the deploy log, from
-# /etc/parrot-terminal/skipped-packages), and the rest is installed.
+# /etc/parrot-terminal/skipped-packages), and the rest is installed. Parrot's
+# tool groups (parrot-tools-*) list their tools as Recommends, so they are
+# installed with recommends; everything else without.
 RUN set -eux; \
     install -d -m 0755 /etc/parrot-terminal; \
     : > /etc/parrot-terminal/skipped-packages; \
@@ -96,17 +102,21 @@ RUN set -eux; \
         printf '%s\n' "${pkg:0:64}" >> /etc/parrot-terminal/skipped-packages; \
       fi; \
     done; \
+    install_one() { \
+      case "$1" in \
+        parrot-tools-*) apt-get install -y --install-recommends "$1" ;; \
+        *) apt-get install -y --no-install-recommends "$1" ;; \
+      esac; \
+    }; \
     if (( ${#extra[@]} > 0 )); then \
       apt-get update; \
-      if ! apt-get install -y --no-install-recommends "${extra[@]}"; then \
-        echo "WARNING: PARROT_EXTRA_PACKAGES: installing '${extra[*]}' together failed. Trying one package at a time." >&2; \
-        for pkg in "${extra[@]}"; do \
-          if ! apt-get install -y --no-install-recommends "$pkg"; then \
-            echo "WARNING: PARROT_EXTRA_PACKAGES: skipping '${pkg}', apt could not install it." >&2; \
-            printf '%s\n' "$pkg" >> /etc/parrot-terminal/skipped-packages; \
-          fi; \
-        done; \
-      fi; \
+      for pkg in "${extra[@]}"; do \
+        if ! install_one "$pkg"; then \
+          echo "WARNING: PARROT_EXTRA_PACKAGES: skipping '${pkg}', apt could not install it." >&2; \
+          printf '%s\n' "$pkg" >> /etc/parrot-terminal/skipped-packages; \
+        fi; \
+      done; \
+      apt-get clean; \
       rm -rf /var/lib/apt/lists/*; \
     fi; \
     chmod 0644 /etc/parrot-terminal/skipped-packages

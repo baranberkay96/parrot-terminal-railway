@@ -9,7 +9,7 @@
   Sessions:  tmux keeps this shell running when the tab closes. Reopen the URL
              to resume. New window: Ctrl-b c. Next: Ctrl-b n. Detach: Ctrl-b d.
              Separate session: add ?arg=work to the URL.
-  Tools:     nmap (TCP connect scans), sqlmap, ffuf, gobuster, feroxbuster,
+  Tools:     nmap (TCP connect scans), sqlmap, ffuf, gobuster, dirsearch,
              nuclei, subfinder, amass, hydra, john, hashcat, netexec,
              impacket-*, enum4linux-ng, searchsploit, wordlists in
              /usr/share/wordlists. Root: sudo -i.

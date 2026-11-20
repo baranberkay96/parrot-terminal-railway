@@ -46,15 +46,15 @@ A browser shell needs a long-running Linux container, a terminal server, a real 
 
 | Area | Tools |
 |---|---|
-| Recon | nmap, dnsrecon, dnsenum, amass, subfinder, dnsx, naabu, httpx (`httpx-toolkit`), theHarvester, recon-ng, sherlock, whois, dig |
-| Web | sqlmap, ffuf, gobuster, feroxbuster, dirb, dirsearch, whatweb, wafw00f, wfuzz, nuclei, sslscan, commix |
+| Recon | nmap, dnsrecon, dnsenum, amass, subfinder, dnsx, naabu, httpx (`httpx-toolkit`), recon-ng, sherlock, whois, dig |
+| Web | sqlmap, ffuf, gobuster, dirb, dirsearch, whatweb, wafw00f, wfuzz, nuclei, sslscan |
 | Passwords | hydra, john, hashcat (CPU), hashid, hash-identifier, crunch, cewl, `/usr/share/wordlists` (rockyou and others) |
 | Windows / AD | netexec, impacket scripts, evil-winrm, smbclient, smbmap, nbtscan, enum4linux-ng |
 | Reference and post-exploitation | searchsploit (exploitdb), PEASS, linux-exploit-suggester, lynis |
 | Reversing and files | gdb, radare2, binwalk, yara, exiftool |
 | Everyday | git, curl, wget, python3, pip, pipx, build-essential, vim, nano, tmux, htop, jq, socat, proxychains4 |
 
-**More tools**: set `PARROT_EXTRA_PACKAGES` to a space-separated list of Parrot packages, for example `metasploit-framework`, or a whole group such as `parrot-tools-web` or `parrot-tools-password`. Railway passes the variable to the Docker build, so the next deploy builds an image with those packages and they survive every redeploy. Names apt cannot install are skipped with a warning in the build and deploy logs, so a typo never fails the deploy. Keep the image under 4 GB compressed if you are on Trial or Free (Metasploit alone adds about 0.3 GB compressed; `parrot-tools-full` is far too large). Packages installed with `sudo apt install` in the shell work at once but reset on the next redeploy.
+**More tools**: set `PARROT_EXTRA_PACKAGES` to a space-separated list of Parrot packages, for example `metasploit-framework`, `theharvester` or `feroxbuster` (left out by default because they pull in Chromium or the 2 GB SecLists), or a whole group such as `parrot-tools-web` or `parrot-tools-password`. Railway passes the variable to the Docker build, so the next deploy builds an image with those packages and they survive every redeploy. Names apt cannot install are skipped with a warning in the build and deploy logs, so a typo never fails the deploy. Keep the image under 4 GB compressed if you are on Trial or Free (Metasploit adds about 0.5 GB compressed with its dependencies; a `parrot-tools-*` group installs every tool it lists, and `parrot-tools-full` is far too large). Packages installed with `sudo apt install` in the shell work at once but reset on the next redeploy.
 
 **What persists**: everything under `/home/parrot`: files, notes, shell history, Python virtualenvs and pipx apps in `~/.local`, Go tools in `~/go/bin`. Running processes and apt packages reset on every redeploy or restart. tmux keeps sessions alive across browser reconnects, not across container restarts.
 
