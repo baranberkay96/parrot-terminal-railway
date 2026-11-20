@@ -1,5 +1,7 @@
 # Deploy and Host Parrot OS Security Web Terminal with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/parrot-os-7-security-web-terminal-browse?referralCode=20H68q)
+
 A Parrot OS 7 shell in your browser with a curated set of Parrot's command-line security tools: nmap, sqlmap, ffuf, gobuster, nuclei, subfinder, amass, hydra, john, hashcat, netexec, impacket and searchsploit. tmux keeps sessions and long scans running when you close the tab. A generated password protects the shell, and your home directory lives on a persistent volume. Need Metasploit or a whole Parrot tool group? Name it in one variable and Railway builds it into the image.
 
 ## About Hosting Parrot OS Security Web Terminal
